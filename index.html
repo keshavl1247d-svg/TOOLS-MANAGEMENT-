@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maintenance Dashboard — Tool Management System</title>
+<meta name="description" content="A comprehensive Tool Management System for tracking tools, parts, and inventory with real-time IN/OUT logging and reporting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 14px; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f5f6fa;
+  color: #333;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== LAYOUT ===== */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+.sidebar-header {
+  padding: 20px 18px;
+  border-bottom: 1px solid #e8eaed;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #1a73e8, #4285f4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.sidebar-brand {
+  font-size: 13px;
+  font-weight: 600;
+  color: #202124;
+  line-height: 1.3;
+}
+.sidebar-brand span {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  color: #80868b;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.sidebar-nav {
+  padding: 12px 8px;
+  flex: 1;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #5f6368;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+  user-select: none;
+}
+.nav-item:hover {
+  background: #f1f3f4;
+  color: #202124;
+}
+.nav-item.active {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+.nav-item .nav-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid #e8eaed;
+  font-size: 11px;
+  color: #9aa0a6;
+  text-align: center;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  flex: 1;
+  margin-left: 220px;
+  min-height: 100vh;
+}
+.top-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.top-header h1 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #202124;
+}
+.top-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.top-header-time {
+  font-size: 12px;
+  color: #80868b;
+}
+.page-content {
+  padding: 24px 28px;
+}
+
+/* ===== PAGE ===== */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== STAT CARDS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.stat-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+.stat-card-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #80868b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.stat-card-value {
+  font-size: 28px;
+  font-weight: 500;
+  color: #202124;
+}
+.stat-card-value.green { color: #137333; }
+.stat-card-value.blue { color: #1a73e8; }
+.stat-card-value.red { color: #c5221f; }
+.stat-card-value.orange { color: #b06000; }
+.stat-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.stat-card-icon.bg-blue { background: #e8f0fe; color: #1a73e8; }
+.stat-card-icon.bg-green { background: #e6f4ea; color: #137333; }
+.stat-card-icon.bg-red { background: #fce8e6; color: #c5221f; }
+.stat-card-icon.bg-orange { background: #fef7e0; color: #b06000; }
+
+/* ===== CARDS ===== */
+.card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8eaed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-header h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #202124;
+}
+.card-body {
+  padding: 0;
+}
+.card-body-padded {
+  padding: 20px;
+}
+
+/* ===== TABLES ===== */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table th {
+  background: #f8f9fa;
+  font-size: 11px;
+  font-weight: 600;
+  color: #80868b;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e8eaed;
+  white-space: nowrap;
+}
+table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f3f4;
+  font-size: 13px;
+  color: #3c4043;
+  vertical-align: middle;
+}
+table tbody tr {
+  transition: background 0.15s ease;
+}
+table tbody tr:hover {
+  background: #f8f9fa;
+}
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+.empty-row td {
+  text-align: center;
+  color: #9aa0a6;
+  padding: 32px 16px;
+  font-style: italic;
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.badge-green { background: #e6f4ea; color: #137333; }
+.badge-blue { background: #e8f0fe; color: #1a73e8; }
+.badge-red { background: #fce8e6; color: #c5221f; }
+.badge-orange { background: #fef7e0; color: #b06000; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: #1a73e8;
+  color: #fff;
+}
+.btn-primary:hover { background: #1557b0; box-shadow: 0 2px 8px rgba(26,115,232,0.3); }
+.btn-success {
+  background: #137333;
+  color: #fff;
+}
+.btn-success:hover { background: #0d5c2a; box-shadow: 0 2px 8px rgba(19,115,51,0.3); }
+.btn-danger {
+  background: #ea4335;
+  color: #fff;
+}
+.btn-danger:hover { background: #c5221f; box-shadow: 0 2px 8px rgba(234,67,53,0.3); }
+.btn-secondary {
+  background: #f1f3f4;
+  color: #5f6368;
+}
+.btn-secondary:hover { background: #e8eaed; }
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+.btn-icon {
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-btns {
+  display: flex;
+  gap: 6px;
+}
+.action-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.action-btn-edit {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+.action-btn-edit:hover { background: #d2e3fc; }
+.action-btn-delete {
+  background: #fce8e6;
+  color: #c5221f;
+}
+.action-btn-delete:hover { background: #f8c8c4; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.modal-overlay.open .modal-box {
+  transform: translateY(0) scale(1);
+}
+.modal-box {
+  background: #fff;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.3s ease;
+}
+.modal-header {
+  padding: 20px 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #202124;
+}
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f1f3f4;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #5f6368;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: #e8eaed; }
+.modal-body {
+  padding: 20px 24px;
+}
+.modal-footer {
+  padding: 0 24px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ===== FORM ===== */
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #5f6368;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #202124;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #e8eaed;
+  margin-bottom: 20px;
+}
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #5f6368;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: #1a73e8; }
+.tab-btn.active {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #202124;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.search-bar input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-bar input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+}
+
+/* ===== AI ASSISTANT ===== */
+.ai-box {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  padding: 20px;
+}
+.ai-box h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #202124;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ai-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.ai-input-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #d2d5db;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ai-input-row input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.15);
+}
+.ai-response {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px;
+  min-height: 60px;
+  font-size: 13px;
+  color: #3c4043;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.ai-response.thinking {
+  color: #80868b;
+  font-style: italic;
+}
+
+/* ===== THUMBNAIL ===== */
+.thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+}
+.no-photo {
+  font-size: 11px;
+  color: #9aa0a6;
+}
+
+/* ===== SUCCESS MESSAGE ===== */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #137333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 2000;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+  transform: translateX(120%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.toast.show {
+  transform: translateX(0);
+}
+
+/* ===== REPORT STATS ===== */
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.report-stat-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+}
+.report-stat-card .val {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.report-stat-card .lbl {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #80868b;
+}
+
+/* ===== SUMMARY ===== */
+.summary-block {
+  margin-top: 18px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #3c4043;
+  line-height: 1.7;
+}
+.summary-block strong {
+  color: #202124;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  .mobile-toggle {
+    display: flex !important;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+.mobile-toggle {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  color: #5f6368;
+}
+
+/* ===== SCROLL BAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c4c7cc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9aa0a6; }
+
+/* ===== MISC ===== */
+.mt-20 { margin-top: 20px; }
+.mb-14 { margin-bottom: 14px; }
+.text-center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">🔧</div>
+      <div class="sidebar-brand">Maintenance<span>Tool Management System</span></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" data-page="parts" onclick="switchPage('parts')">
+        <span class="nav-icon">📦</span> Part Management
+      </div>
+      <div class="nav-item" data-page="tools" onclick="switchPage('tools')">
+        <span class="nav-icon">🔧</span> Tools Management
+      </div>
+      <div class="nav-item" data-page="inout" onclick="switchPage('inout')">
+        <span class="nav-icon">🔄</span> Tool IN/OUT Entry
+      </div>
+      <div class="nav-item" data-page="search" onclick="switchPage('search')">
+        <span class="nav-icon">🔍</span> Search System
+      </div>
+      <div class="nav-item" data-page="reports" onclick="switchPage('reports')">
+        <span class="nav-icon">📈</span> Reports
+      </div>
+    </nav>
+    <div class="sidebar-footer">© 2026 TMS v1.0</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <header class="top-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="top-header-right">
+        <span class="top-header-time" id="headerTime"></span>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- ============ PAGE: DASHBOARD ============ -->
+      <section class="page active" id="page-dashboard">
+        <div class="stats-grid" id="dashboardStats"></div>
+
+        <div class="card">
+          <div class="card-header"><h2>Recent IN/OUT Activity</h2></div>
+          <div class="card-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Part No.</th><th>Tool Name</th><th>Action</th><th>Person</th><th>Time</th>
+                </tr>
+              </thead>
+              <tbody id="recentActivity"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="ai-box mt-20">
+          <h3>🤖 AI Assistant</h3>
+          <div class="ai-input-row">
+            <input type="text" id="aiInput" placeholder="Ask about your inventory..." onkeydown="if(event.key==='Enter')askAI()">
+            <button class="btn btn-primary" onclick="askAI()">Send</button>
+          </div>
+          <div class="ai-response" id="aiResponse">Ask me anything about your tools, parts, or inventory status.</div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: PART MANAGEMENT ============ -->
+      <section class="page" id="page-parts">
+        <div class="page-header">
+          <h2>Part Management</h2>
+          <button class="btn btn-primary" onclick="openPartModal()">＋ Add Part</button>
+        </div>
+        <div class="card">
+          <div class="card-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Part No.</th><th>Part Name</th><th>Quantity</th><th>Location</th><th>Status</th><th>Photo</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="partsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: TOOLS MANAGEMENT ============ -->
+      <section class="page" id="page-tools">
+        <div class="page-header">
+          <h2>Tools Management</h2>
+          <button class="btn btn-primary" onclick="openToolModal()">＋ Add Tool</button>
+        </div>
+        <div class="card">
+          <div class="card-body table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tool No.</th><th>Tool Name</th><th>Linked Part No.</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="toolsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: TOOL IN/OUT ENTRY ============ -->
+      <section class="page" id="page-inout">
+        <div class="page-header"><h2>Tool IN/OUT Entry</h2></div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'inout-tab','issueTab')">Issue Tool (OUT)</button>
+          <button class="tab-btn" onclick="switchTab(this,'inout-tab','returnTab')">Return Tool (IN)</button>
+          <button class="tab-btn" onclick="switchTab(this,'inout-tab','historyTab')">History</button>
+        </div>
+
+        <!-- Issue Tab -->
+        <div class="tab-content inout-tab active" id="issueTab">
+          <div class="card"><div class="card-body-padded">
+            <div class="form-group">
+              <label>Part Number</label>
+              <input type="text" id="issuePartNo" placeholder="e.g. P001">
+            </div>
+            <div class="form-group">
+              <label>Tool Name</label>
+              <select id="issueToolName"><option value="">Select Tool...</option></select>
+            </div>
+            <div class="form-group">
+              <label>Issued To</label>
+              <input type="text" id="issuePerson" placeholder="Employee name">
+            </div>
+            <div class="form-group">
+              <label>Date & Time</label>
+              <input type="datetime-local" id="issueTime">
+            </div>
+            <button class="btn btn-primary" onclick="issueTool()">Issue Tool</button>
+          </div></div>
+        </div>
+
+        <!-- Return Tab -->
+        <div class="tab-content inout-tab" id="returnTab">
+          <div class="card"><div class="card-body-padded">
+            <div class="form-group">
+              <label>Part Number</label>
+              <input type="text" id="returnPartNo" placeholder="e.g. P001">
+            </div>
+            <div class="form-group">
+              <label>Tool Name</label>
+              <select id="returnToolName"><option value="">Select Tool...</option></select>
+            </div>
+            <div class="form-group">
+              <label>Returned By</label>
+              <input type="text" id="returnPerson" placeholder="Employee name">
+            </div>
+            <div class="form-group">
+              <label>Condition</label>
+              <select id="returnCondition">
+                <option value="Good">Good</option>
+                <option value="Damaged">Damaged</option>
+              </select>
+            </div>
+            <button class="btn btn-success" onclick="returnTool()">Return Tool</button>
+          </div></div>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-content inout-tab" id="historyTab">
+          <div class="card">
+            <div class="card-body table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Part No.</th><th>Tool Name</th><th>Action</th><th>Person</th><th>Condition</th><th>Date & Time</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: SEARCH SYSTEM ============ -->
+      <section class="page" id="page-search">
+        <div class="page-header"><h2>Search System</h2></div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'search-tab','searchByPart')">Search by Part Number</button>
+          <button class="tab-btn" onclick="switchTab(this,'search-tab','searchByTool')">Search by Tool Number/Name</button>
+          <button class="tab-btn" onclick="switchTab(this,'search-tab','searchByName')">Search by Part Name</button>
+        </div>
+
+        <div class="tab-content search-tab active" id="searchByPart">
+          <div class="search-bar">
+            <input type="text" id="searchPartInput" placeholder="Enter Part Number (e.g. P001)" onkeydown="if(event.key==='Enter')doSearch('part')">
+            <button class="btn btn-primary" onclick="doSearch('part')">Search</button>
+          </div>
+          <div class="card"><div class="card-body table-wrap">
+            <table>
+              <thead><tr><th>Part No.</th><th>Part Name</th><th>Tool Name</th><th>Location</th><th>Quantity</th><th>Status</th></tr></thead>
+              <tbody id="searchPartResults"></tbody>
+            </table>
+          </div></div>
+        </div>
+
+        <div class="tab-content search-tab" id="searchByTool">
+          <div class="search-bar">
+            <input type="text" id="searchToolInput" placeholder="Enter Tool Number or Name" onkeydown="if(event.key==='Enter')doSearch('tool')">
+            <button class="btn btn-primary" onclick="doSearch('tool')">Search</button>
+          </div>
+          <div class="card"><div class="card-body table-wrap">
+            <table>
+              <thead><tr><th>Part No.</th><th>Part Name</th><th>Tool Name</th><th>Location</th><th>Quantity</th><th>Status</th></tr></thead>
+              <tbody id="searchToolResults"></tbody>
+            </table>
+          </div></div>
+        </div>
+
+        <div class="tab-content search-tab" id="searchByName">
+          <div class="search-bar">
+            <input type="text" id="searchNameInput" placeholder="Enter Part Name" onkeydown="if(event.key==='Enter')doSearch('name')">
+            <button class="btn btn-primary" onclick="doSearch('name')">Search</button>
+          </div>
+          <div class="card"><div class="card-body table-wrap">
+            <table>
+              <thead><tr><th>Part No.</th><th>Part Name</th><th>Tool Name</th><th>Location</th><th>Quantity</th><th>Status</th></tr></thead>
+              <tbody id="searchNameResults"></tbody>
+            </table>
+          </div></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: REPORTS ============ -->
+      <section class="page" id="page-reports">
+        <div class="page-header"><h2>Reports</h2></div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'report-tab','dailyReport')">Daily Report</button>
+          <button class="tab-btn" onclick="switchTab(this,'report-tab','monthlyReport')">Monthly Report</button>
+        </div>
+
+        <div class="tab-content report-tab active" id="dailyReport">
+          <h3 class="mb-14" id="dailyTitle" style="font-size:16px;font-weight:500;color:#202124;"></h3>
+          <div class="report-stats" id="dailyStats"></div>
+          <div class="card">
+            <div class="card-header"><h2>Today's Activity</h2></div>
+            <div class="card-body table-wrap">
+              <table>
+                <thead><tr><th>Time</th><th>Tool Name</th><th>Action</th><th>Person</th><th>Condition</th></tr></thead>
+                <tbody id="dailyTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content report-tab" id="monthlyReport">
+          <h3 class="mb-14" id="monthlyTitle" style="font-size:16px;font-weight:500;color:#202124;"></h3>
+          <div class="card">
+            <div class="card-header"><h2>Monthly Summary</h2></div>
+            <div class="card-body table-wrap">
+              <table>
+                <thead><tr><th>Tool Name</th><th>Total Issues (OUT)</th><th>Total Returns (IN)</th><th>Damaged Returns</th></tr></thead>
+                <tbody id="monthlyTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="summary-block" id="monthlySummary"></div>
+        </div>
+      </section>
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app-layout -->
+
+<!-- ===== PART MODAL ===== -->
+<div class="modal-overlay" id="partModal" onclick="if(event.target===this)closeModal('partModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="partModalTitle">Add Part</h3>
+      <button class="modal-close" onclick="closeModal('partModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="partEditIdx">
+      <div class="form-group"><label>Part Number *</label><input type="text" id="pmPartNo" placeholder="e.g. P006"></div>
+      <div class="form-group"><label>Part Name *</label><input type="text" id="pmPartName" placeholder="e.g. Socket Set"></div>
+      <div class="form-group"><label>Quantity</label><input type="number" id="pmQty" value="0" min="0"></div>
+      <div class="form-group"><label>Location</label><input type="text" id="pmLocation" placeholder="e.g. Rack A"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="pmStatus"><option>Available</option><option>Out</option><option>Damaged</option></select>
+      </div>
+      <div class="form-group"><label>Photo URL</label><input type="text" id="pmPhoto" placeholder="https://example.com/photo.jpg"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('partModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePart()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOOL MODAL ===== -->
+<div class="modal-overlay" id="toolModal" onclick="if(event.target===this)closeModal('toolModal')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="toolModalTitle">Add Tool</h3>
+      <button class="modal-close" onclick="closeModal('toolModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="toolEditIdx">
+      <div class="form-group"><label>Tool Number *</label><input type="text" id="tmToolNo" placeholder="e.g. T006"></div>
+      <div class="form-group"><label>Tool Name *</label><input type="text" id="tmToolName" placeholder="e.g. Angle Grinder"></div>
+      <div class="form-group"><label>Linked Part Number</label><input type="text" id="tmPartNo" placeholder="e.g. P001"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="tmStatus"><option>IN</option><option>OUT</option><option>Damaged</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('toolModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTool()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====================================================================
+   DATA LAYER
+   ==================================================================== */
+const KEYS = { parts: 'tms_parts', tools: 'tms_tools', history: 'tms_history' };
+
+const SAMPLE_PARTS = [
+  { partNo:'P001', name:'Drill Bit Set', qty:5, location:'Rack A', status:'Available', photo:'' },
+  { partNo:'P002', name:'Wrench 12mm', qty:8, location:'Rack B', status:'Available', photo:'' },
+  { partNo:'P003', name:'Caliper Gauge', qty:3, location:'Rack A', status:'Out', photo:'' },
+  { partNo:'P004', name:'Torque Driver', qty:2, location:'Cabinet C', status:'Damaged', photo:'' },
+  { partNo:'P005', name:'Bearing Puller', qty:4, location:'Rack D', status:'Available', photo:'' }
+];
+const SAMPLE_TOOLS = [
+  { toolNo:'T001', name:'Drill Machine', partNo:'P001', status:'IN' },
+  { toolNo:'T002', name:'Bench Wrench', partNo:'P002', status:'OUT' },
+  { toolNo:'T003', name:'Precision Caliper', partNo:'P003', status:'IN' },
+  { toolNo:'T004', name:'Impact Driver', partNo:'P004', status:'Damaged' },
+  { toolNo:'T005', name:'Hydraulic Puller', partNo:'P005', status:'IN' }
+];
+
+function load(key, fallback) {
+  const d = localStorage.getItem(key);
+  return d ? JSON.parse(d) : fallback;
+}
+function save(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+
+let parts   = load(KEYS.parts, SAMPLE_PARTS);
+let tools   = load(KEYS.tools, SAMPLE_TOOLS);
+let history = load(KEYS.history, []);
+
+// Persist initial sample data if first load
+if (!localStorage.getItem(KEYS.parts))   save(KEYS.parts, parts);
+if (!localStorage.getItem(KEYS.tools))   save(KEYS.tools, tools);
+if (!localStorage.getItem(KEYS.history)) save(KEYS.history, history);
+
+/* ====================================================================
+   UTILITIES
+   ==================================================================== */
+function statusBadge(s) {
+  const map = {
+    'Available':'badge-green','IN':'badge-green','Good':'badge-green',
+    'Out':'badge-blue','OUT':'badge-blue',
+    'Damaged':'badge-red'
+  };
+  return `<span class="badge ${map[s]||'badge-blue'}">${s}</span>`;
+}
+function actionBadge(a) {
+  return a === 'OUT'
+    ? '<span class="badge badge-blue">OUT</span>'
+    : '<span class="badge badge-green">IN</span>';
+}
+function fmtTime(t) {
+  if (!t) return '—';
+  const d = new Date(t);
+  return d.toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+}
+function shortTime(t) {
+  if (!t) return '—';
+  const d = new Date(t);
+  return d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
+}
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function thisMonth() { const d=new Date(); return { m:d.getMonth(), y:d.getFullYear() }; }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 3000);
+}
+
+/* ====================================================================
+   NAVIGATION
+   ==================================================================== */
+const pageTitles = {
+  dashboard:'Dashboard', parts:'Part Management', tools:'Tools Management',
+  inout:'Tool IN/OUT Entry', search:'Search System', reports:'Reports'
+};
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === id));
+  document.getElementById('pageTitle').textContent = pageTitles[id];
+  // Close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  // Refresh page data
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'parts') renderParts();
+  if (id === 'tools') renderTools();
+  if (id === 'inout') { populateToolDropdowns(); renderHistory(); }
+  if (id === 'reports') { renderDailyReport(); renderMonthlyReport(); }
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+}
+
+/* ====================================================================
+   TAB SWITCH
+   ==================================================================== */
+function switchTab(btn, cls, showId) {
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.'+cls).forEach(t => t.classList.remove('active'));
+  document.getElementById(showId).classList.add('active');
+}
+
+/* ====================================================================
+   MODAL
+   ==================================================================== */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ====================================================================
+   DASHBOARD
+   ==================================================================== */
+function renderDashboard() {
+  const total = tools.length;
+  const inC = tools.filter(t => t.status === 'IN').length;
+  const outC = tools.filter(t => t.status === 'OUT').length;
+  const dmgC = tools.filter(t => t.status === 'Damaged').length;
+
+  document.getElementById('dashboardStats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-card-icon bg-blue">🔧</div>
+      <div class="stat-card-label">Total Tools</div>
+      <div class="stat-card-value">${total}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon bg-green">✅</div>
+      <div class="stat-card-label">IN Tools</div>
+      <div class="stat-card-value green">${inC}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon bg-blue">📤</div>
+      <div class="stat-card-label">OUT Tools</div>
+      <div class="stat-card-value blue">${outC}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon bg-red">⚠️</div>
+      <div class="stat-card-label">Damaged Tools</div>
+      <div class="stat-card-value red">${dmgC}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-icon bg-orange">📦</div>
+      <div class="stat-card-label">Available Stock</div>
+      <div class="stat-card-value orange">${inC}</div>
+    </div>
+  `;
+
+  const recent = [...history].reverse().slice(0, 8);
+  const tbody = document.getElementById('recentActivity');
+  if (recent.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No recent activity</td></tr>';
+  } else {
+    tbody.innerHTML = recent.map(h => `
+      <tr>
+        <td>${h.partNo||'—'}</td>
+        <td>${h.tool}</td>
+        <td>${actionBadge(h.action)}</td>
+        <td>${h.person}</td>
+        <td>${fmtTime(h.time)}</td>
+      </tr>
+    `).join('');
+  }
+}
+
+/* ====================================================================
+   AI ASSISTANT (Anthropic Claude)
+   ==================================================================== */
+async function askAI() {
+  const input = document.getElementById('aiInput');
+  const respEl = document.getElementById('aiResponse');
+  const q = input.value.trim();
+  if (!q) return;
+
+  respEl.textContent = 'Thinking...';
+  respEl.classList.add('thinking');
+
+  const context = `\n\nCurrent Inventory Data:\n` +
+    `Parts: ${JSON.stringify(parts)}\n` +
+    `Tools: ${JSON.stringify(tools)}\n` +
+    `Recent History (last 20): ${JSON.stringify(history.slice(-20))}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        system: 'You are a helpful assistant for a Tool Management System. Answer questions based on the inventory data provided to you. Keep answers concise and formatted clearly.',
+        messages: [{ role: 'user', content: q + context }]
+      })
+    });
+    const data = await res.json();
+    const answer = data.content?.[0]?.text || data.error?.message || 'No response received.';
+    respEl.textContent = answer;
+    respEl.classList.remove('thinking');
+  } catch (err) {
+    respEl.textContent = 'Error: Could not reach the AI service. Make sure you have a valid API key configured. (' + err.message + ')';
+    respEl.classList.remove('thinking');
+  }
+  input.value = '';
+}
+
+/* ====================================================================
+   PART MANAGEMENT
+   ==================================================================== */
+function renderParts() {
+  const tbody = document.getElementById('partsTable');
+  if (parts.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No parts found. Add one to get started.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = parts.map((p, i) => `
+    <tr>
+      <td><strong>${p.partNo}</strong></td>
+      <td>${p.name}</td>
+      <td>${p.qty}</td>
+      <td>${p.location||'—'}</td>
+      <td>${statusBadge(p.status)}</td>
+      <td>${p.photo ? `<img class="thumb" src="${p.photo}" alt="${p.name}" onerror="this.outerHTML='<span class=no-photo>No photo</span>'">` : '<span class="no-photo">No photo</span>'}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn action-btn-edit" title="Edit" onclick="editPart(${i})">✏️</button>
+          <button class="action-btn action-btn-delete" title="Delete" onclick="deletePart(${i})">🗑️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+function openPartModal(idx) {
+  const isEdit = idx !== undefined;
+  document.getElementById('partModalTitle').textContent = isEdit ? 'Edit Part' : 'Add Part';
+  document.getElementById('partEditIdx').value = isEdit ? idx : '';
+  if (isEdit) {
+    const p = parts[idx];
+    document.getElementById('pmPartNo').value = p.partNo;
+    document.getElementById('pmPartName').value = p.name;
+    document.getElementById('pmQty').value = p.qty;
+    document.getElementById('pmLocation').value = p.location;
+    document.getElementById('pmStatus').value = p.status;
+    document.getElementById('pmPhoto').value = p.photo || '';
+  } else {
+    ['pmPartNo','pmPartName','pmLocation','pmPhoto'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('pmQty').value = 0;
+    document.getElementById('pmStatus').value = 'Available';
+  }
+  openModal('partModal');
+}
+function editPart(i) { openPartModal(i); }
+function savePart() {
+  const no   = document.getElementById('pmPartNo').value.trim();
+  const name = document.getElementById('pmPartName').value.trim();
+  if (!no || !name) { alert('Part Number and Part Name are required.'); return; }
+  const obj = {
+    partNo: no, name: name,
+    qty: parseInt(document.getElementById('pmQty').value) || 0,
+    location: document.getElementById('pmLocation').value.trim(),
+    status: document.getElementById('pmStatus').value,
+    photo: document.getElementById('pmPhoto').value.trim()
+  };
+  const idx = document.getElementById('partEditIdx').value;
+  if (idx !== '') { parts[parseInt(idx)] = obj; } else { parts.push(obj); }
+  save(KEYS.parts, parts);
+  closeModal('partModal');
+  renderParts();
+  showToast(idx !== '' ? 'Part updated successfully' : 'Part added successfully');
+}
+function deletePart(i) {
+  if (!confirm(`Are you sure you want to delete "${parts[i].name}"?`)) return;
+  parts.splice(i, 1);
+  save(KEYS.parts, parts);
+  renderParts();
+  showToast('Part deleted');
+}
+
+/* ====================================================================
+   TOOLS MANAGEMENT
+   ==================================================================== */
+function renderTools() {
+  const tbody = document.getElementById('toolsTable');
+  if (tools.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No tools found. Add one to get started.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = tools.map((t, i) => `
+    <tr>
+      <td><strong>${t.toolNo}</strong></td>
+      <td>${t.name}</td>
+      <td>${t.partNo||'—'}</td>
+      <td>${statusBadge(t.status)}</td>
+      <td>
+        <div class="action-btns">
+          <button class="action-btn action-btn-edit" title="Edit" onclick="editTool(${i})">✏️</button>
+          <button class="action-btn action-btn-delete" title="Delete" onclick="deleteTool(${i})">🗑️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+function openToolModal(idx) {
+  const isEdit = idx !== undefined;
+  document.getElementById('toolModalTitle').textContent = isEdit ? 'Edit Tool' : 'Add Tool';
+  document.getElementById('toolEditIdx').value = isEdit ? idx : '';
+  if (isEdit) {
+    const t = tools[idx];
+    document.getElementById('tmToolNo').value = t.toolNo;
+    document.getElementById('tmToolName').value = t.name;
+    document.getElementById('tmPartNo').value = t.partNo;
+    document.getElementById('tmStatus').value = t.status;
+  } else {
+    ['tmToolNo','tmToolName','tmPartNo'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('tmStatus').value = 'IN';
+  }
+  openModal('toolModal');
+}
+function editTool(i) { openToolModal(i); }
+function saveTool() {
+  const no   = document.getElementById('tmToolNo').value.trim();
+  const name = document.getElementById('tmToolName').value.trim();
+  if (!no || !name) { alert('Tool Number and Tool Name are required.'); return; }
+  const obj = {
+    toolNo: no, name: name,
+    partNo: document.getElementById('tmPartNo').value.trim(),
+    status: document.getElementById('tmStatus').value
+  };
+  const idx = document.getElementById('toolEditIdx').value;
+  if (idx !== '') { tools[parseInt(idx)] = obj; } else { tools.push(obj); }
+  save(KEYS.tools, tools);
+  closeModal('toolModal');
+  renderTools();
+  showToast(idx !== '' ? 'Tool updated successfully' : 'Tool added successfully');
+}
+function deleteTool(i) {
+  if (!confirm(`Are you sure you want to delete "${tools[i].name}"?`)) return;
+  tools.splice(i, 1);
+  save(KEYS.tools, tools);
+  renderTools();
+  showToast('Tool deleted');
+}
+
+/* ====================================================================
+   TOOL IN/OUT ENTRY
+   ==================================================================== */
+function populateToolDropdowns() {
+  const opts = '<option value="">Select Tool...</option>' +
+    tools.map(t => `<option value="${t.name}">${t.toolNo} — ${t.name}</option>`).join('');
+  document.getElementById('issueToolName').innerHTML = opts;
+  document.getElementById('returnToolName').innerHTML = opts;
+  // Set current time
+  const now = new Date();
+  const local = new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0,16);
+  document.getElementById('issueTime').value = local;
+}
+function issueTool() {
+  const toolName = document.getElementById('issueToolName').value;
+  const person   = document.getElementById('issuePerson').value.trim();
+  if (!toolName) { alert('Please select a tool.'); return; }
+  if (!person)   { alert('Please enter the employee name.'); return; }
+
+  // Update tool status
+  const t = tools.find(t => t.name === toolName);
+  if (t) t.status = 'OUT';
+  save(KEYS.tools, tools);
+
+  const entry = {
+    partNo: document.getElementById('issuePartNo').value.trim(),
+    tool: toolName,
+    action: 'OUT',
+    person: person,
+    time: document.getElementById('issueTime').value || new Date().toISOString(),
+    condition: ''
+  };
+  history.push(entry);
+  save(KEYS.history, history);
+
+  showToast('Tool issued successfully');
+  document.getElementById('issuePerson').value = '';
+  document.getElementById('issuePartNo').value = '';
+  populateToolDropdowns();
+  renderHistory();
+}
+function returnTool() {
+  const toolName  = document.getElementById('returnToolName').value;
+  const person    = document.getElementById('returnPerson').value.trim();
+  const condition = document.getElementById('returnCondition').value;
+  if (!toolName) { alert('Please select a tool.'); return; }
+  if (!person)   { alert('Please enter the employee name.'); return; }
+
+  const t = tools.find(t => t.name === toolName);
+  if (t) t.status = condition === 'Damaged' ? 'Damaged' : 'IN';
+  save(KEYS.tools, tools);
+
+  const entry = {
+    partNo: document.getElementById('returnPartNo').value.trim(),
+    tool: toolName,
+    action: 'IN',
+    person: person,
+    time: new Date().toISOString(),
+    condition: condition
+  };
+  history.push(entry);
+  save(KEYS.history, history);
+
+  showToast('Tool returned successfully');
+  document.getElementById('returnPerson').value = '';
+  document.getElementById('returnPartNo').value = '';
+  populateToolDropdowns();
+  renderHistory();
+}
+function renderHistory() {
+  const tbody = document.getElementById('historyTable');
+  const rev = [...history].reverse();
+  if (rev.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No history entries yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rev.map(h => `
+    <tr>
+      <td>${h.partNo||'—'}</td>
+      <td>${h.tool}</td>
+      <td>${actionBadge(h.action)}</td>
+      <td>${h.person}</td>
+      <td>${h.condition||'—'}</td>
+      <td>${fmtTime(h.time)}</td>
+    </tr>
+  `).join('');
+}
+
+/* ====================================================================
+   SEARCH SYSTEM
+   ==================================================================== */
+function doSearch(type) {
+  let results = [];
+  if (type === 'part') {
+    const q = document.getElementById('searchPartInput').value.trim().toLowerCase();
+    if (!q) return;
+    const matched = parts.filter(p => p.partNo.toLowerCase().includes(q));
+    results = matched.map(p => {
+      const linkedTool = tools.find(t => t.partNo === p.partNo);
+      return { partNo:p.partNo, partName:p.name, toolName:linkedTool?linkedTool.name:'—', location:p.location, qty:p.qty, status:p.status };
+    });
+    renderSearchResults('searchPartResults', results);
+  } else if (type === 'tool') {
+    const q = document.getElementById('searchToolInput').value.trim().toLowerCase();
+    if (!q) return;
+    const matched = tools.filter(t => t.toolNo.toLowerCase().includes(q) || t.name.toLowerCase().includes(q));
+    results = matched.map(t => {
+      const linkedPart = parts.find(p => p.partNo === t.partNo);
+      return { partNo:t.partNo, partName:linkedPart?linkedPart.name:'—', toolName:t.name, location:linkedPart?linkedPart.location:'—', qty:linkedPart?linkedPart.qty:'—', status:t.status };
+    });
+    renderSearchResults('searchToolResults', results);
+  } else if (type === 'name') {
+    const q = document.getElementById('searchNameInput').value.trim().toLowerCase();
+    if (!q) return;
+    const matched = parts.filter(p => p.name.toLowerCase().includes(q));
+    results = matched.map(p => {
+      const linkedTool = tools.find(t => t.partNo === p.partNo);
+      return { partNo:p.partNo, partName:p.name, toolName:linkedTool?linkedTool.name:'—', location:p.location, qty:p.qty, status:p.status };
+    });
+    renderSearchResults('searchNameResults', results);
+  }
+}
+function renderSearchResults(tbodyId, results) {
+  const tbody = document.getElementById(tbodyId);
+  if (results.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No results found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = results.map(r => `
+    <tr>
+      <td><strong>${r.partNo||'—'}</strong></td>
+      <td>${r.partName}</td>
+      <td>${r.toolName}</td>
+      <td>${r.location||'—'}</td>
+      <td>${r.qty}</td>
+      <td>${statusBadge(r.status)}</td>
+    </tr>
+  `).join('');
+}
+
+/* ====================================================================
+   REPORTS
+   ==================================================================== */
+function renderDailyReport() {
+  const today = todayStr();
+  const d = new Date();
+  document.getElementById('dailyTitle').textContent =
+    `Daily Report — ${d.toLocaleDateString('en-IN',{weekday:'long', day:'numeric', month:'long', year:'numeric'})}`;
+
+  const todayHistory = history.filter(h => h.time && h.time.slice(0,10) === today);
+  const issuedToday  = todayHistory.filter(h => h.action === 'OUT').length;
+  const returnedToday = todayHistory.filter(h => h.action === 'IN').length;
+  const damagedTotal = tools.filter(t => t.status === 'Damaged').length;
+
+  document.getElementById('dailyStats').innerHTML = `
+    <div class="report-stat-card"><div class="val blue">${issuedToday}</div><div class="lbl">Tools Issued Today</div></div>
+    <div class="report-stat-card"><div class="val green">${returnedToday}</div><div class="lbl">Tools Returned Today</div></div>
+    <div class="report-stat-card"><div class="val red">${damagedTotal}</div><div class="lbl">Currently Damaged</div></div>
+  `;
+
+  const tbody = document.getElementById('dailyTable');
+  if (todayHistory.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No activity recorded for today.</td></tr>';
+  } else {
+    tbody.innerHTML = [...todayHistory].reverse().map(h => `
+      <tr>
+        <td>${shortTime(h.time)}</td>
+        <td>${h.tool}</td>
+        <td>${actionBadge(h.action)}</td>
+        <td>${h.person}</td>
+        <td>${h.condition||'—'}</td>
+      </tr>
+    `).join('');
+  }
+}
+function renderMonthlyReport() {
+  const {m, y} = thisMonth();
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('monthlyTitle').textContent = `Monthly Report — ${monthNames[m]} ${y}`;
+
+  const monthHistory = history.filter(h => {
+    if (!h.time) return false;
+    const d = new Date(h.time);
+    return d.getMonth() === m && d.getFullYear() === y;
+  });
+
+  // Group by tool
+  const map = {};
+  monthHistory.forEach(h => {
+    if (!map[h.tool]) map[h.tool] = { issues:0, returns:0, damaged:0 };
+    if (h.action === 'OUT') map[h.tool].issues++;
+    if (h.action === 'IN') {
+      map[h.tool].returns++;
+      if (h.condition === 'Damaged') map[h.tool].damaged++;
+    }
+  });
+
+  const tbody = document.getElementById('monthlyTable');
+  const toolNames = Object.keys(map);
+  if (toolNames.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="4">No activity this month.</td></tr>';
+    document.getElementById('monthlySummary').innerHTML = '';
+    return;
+  }
+  tbody.innerHTML = toolNames.map(n => `
+    <tr>
+      <td>${n}</td>
+      <td>${map[n].issues}</td>
+      <td>${map[n].returns}</td>
+      <td>${map[n].damaged}</td>
+    </tr>
+  `).join('');
+
+  const totalIssues  = toolNames.reduce((s,n) => s + map[n].issues, 0);
+  const totalReturns = toolNames.reduce((s,n) => s + map[n].returns, 0);
+  const most = toolNames.reduce((a,b) => map[a].issues >= map[b].issues ? a : b, toolNames[0]);
+
+  document.getElementById('monthlySummary').innerHTML = `
+    <strong>Total Issues this month:</strong> ${totalIssues}<br>
+    <strong>Total Returns this month:</strong> ${totalReturns}<br>
+    <strong>Most Issued Tool:</strong> ${most} (${map[most].issues} times)
+  `;
+}
+
+/* ====================================================================
+   HEADER CLOCK
+   ==================================================================== */
+function updateClock() {
+  document.getElementById('headerTime').textContent =
+    new Date().toLocaleString('en-IN', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', hour12:true });
+}
+setInterval(updateClock, 30000);
+updateClock();
+
+/* ====================================================================
+   INIT
+   ==================================================================== */
+renderDashboard();
+</script>
+</body>
+</html>
