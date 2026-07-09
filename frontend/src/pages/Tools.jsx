@@ -11,7 +11,6 @@ const Tools = () => {
   const [tools, setTools] = useState([]);
   const [parts, setParts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTool, setEditingTool] = useState(null);
   const [formData, setFormData] = useState({ tool_number: '', tool_name: '', part_id: '', status: 'IN' });
@@ -33,12 +32,7 @@ const Tools = () => {
   const handleOpenModal = (tool = null) => {
     setEditingTool(tool);
     if (tool) {
-      setFormData({
-        tool_number: tool.tool_number,
-        tool_name: tool.tool_name,
-        part_id: tool.part_id || '',
-        status: tool.status
-      });
+      setFormData({ tool_number: tool.tool_number, tool_name: tool.tool_name, part_id: tool.part_id || '', status: tool.status });
     } else {
       setFormData({ tool_number: '', tool_name: '', part_id: '', status: 'IN' });
     }
@@ -51,7 +45,6 @@ const Tools = () => {
       addToast('Tool number and name are required', 'error');
       return;
     }
-
     try {
       if (editingTool) {
         await api.put(`/tools/${editingTool.id}`, formData);
@@ -81,9 +74,9 @@ const Tools = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-dark">Tools Management</h2>
+        <h2 className="text-xl font-semibold text-gray-dark dark:text-white">Tools Management</h2>
         {isAdmin && (
-          <button 
+          <button
             onClick={() => handleOpenModal()}
             className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors shadow-sm"
           >
@@ -92,10 +85,10 @@ const Tools = () => {
         )}
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-border overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-border dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-gray-light uppercase text-xs tracking-wider border-b border-gray-divider">
+            <thead className="bg-gray-50 dark:bg-gray-900 text-gray-light dark:text-gray-400 uppercase text-xs tracking-wider border-b border-gray-divider dark:border-gray-700">
               <tr>
                 <th className="px-6 py-3 font-semibold">Tool No.</th>
                 <th className="px-6 py-3 font-semibold">Tool Name</th>
@@ -104,18 +97,18 @@ const Tools = () => {
                 {isAdmin && <th className="px-6 py-3 font-semibold text-right">Actions</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-divider">
+            <tbody className="divide-y divide-gray-divider dark:divide-gray-700">
               {loading ? (
-                <tr><td colSpan="5" className="px-6 py-8 text-center text-gray-text">Loading tools...</td></tr>
+                <tr><td colSpan="5" className="px-6 py-8 text-center text-gray-text dark:text-gray-400">Loading tools...</td></tr>
               ) : tools.length === 0 ? (
-                <tr><td colSpan="5" className="px-6 py-8 text-center text-gray-light italic">No tools found.</td></tr>
+                <tr><td colSpan="5" className="px-6 py-8 text-center text-gray-light dark:text-gray-500 italic">No tools found.</td></tr>
               ) : (
                 tools.map(tool => (
-                  <tr key={tool.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-3.5 text-gray-dark font-medium">{tool.tool_number}</td>
-                    <td className="px-6 py-3.5 text-gray-text">{tool.tool_name}</td>
-                    <td className="px-6 py-3.5 text-gray-text">
-                      {tool.part_number ? `${tool.part_number} - ${tool.part_name}` : <span className="text-gray-light italic">Unlinked</span>}
+                  <tr key={tool.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
+                    <td className="px-6 py-3.5 text-gray-dark dark:text-white font-medium">{tool.tool_number}</td>
+                    <td className="px-6 py-3.5 text-gray-text dark:text-gray-300">{tool.tool_name}</td>
+                    <td className="px-6 py-3.5 text-gray-text dark:text-gray-300">
+                      {tool.part_number ? `${tool.part_number} - ${tool.part_name}` : <span className="text-gray-light dark:text-gray-500 italic">Unlinked</span>}
                     </td>
                     <td className="px-6 py-3.5"><StatusBadge status={tool.status} /></td>
                     {isAdmin && (
@@ -141,36 +134,32 @@ const Tools = () => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingTool ? 'Edit Tool' : 'Add Tool'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-text uppercase tracking-wide mb-1.5">Tool Number *</label>
-            <input type="text" value={formData.tool_number} onChange={e => setFormData({...formData, tool_number: e.target.value})} className="w-full px-3 py-2 border border-gray-border rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none" required />
+            <label className="block text-xs font-semibold text-gray-text dark:text-gray-300 uppercase tracking-wide mb-1.5">Tool Number *</label>
+            <input type="text" value={formData.tool_number} onChange={e => setFormData({...formData, tool_number: e.target.value})} className="w-full px-3 py-2 border border-gray-border dark:border-gray-600 rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:bg-gray-700 dark:text-white" required />
           </div>
-          
           <div>
-            <label className="block text-xs font-semibold text-gray-text uppercase tracking-wide mb-1.5">Tool Name *</label>
-            <input type="text" value={formData.tool_name} onChange={e => setFormData({...formData, tool_name: e.target.value})} className="w-full px-3 py-2 border border-gray-border rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none" required />
+            <label className="block text-xs font-semibold text-gray-text dark:text-gray-300 uppercase tracking-wide mb-1.5">Tool Name *</label>
+            <input type="text" value={formData.tool_name} onChange={e => setFormData({...formData, tool_name: e.target.value})} className="w-full px-3 py-2 border border-gray-border dark:border-gray-600 rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none dark:bg-gray-700 dark:text-white" required />
           </div>
-
           <div>
-            <label className="block text-xs font-semibold text-gray-text uppercase tracking-wide mb-1.5">Linked Part</label>
-            <select value={formData.part_id} onChange={e => setFormData({...formData, part_id: e.target.value})} className="w-full px-3 py-2 border border-gray-border rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white">
+            <label className="block text-xs font-semibold text-gray-text dark:text-gray-300 uppercase tracking-wide mb-1.5">Linked Part</label>
+            <select value={formData.part_id} onChange={e => setFormData({...formData, part_id: e.target.value})} className="w-full px-3 py-2 border border-gray-border dark:border-gray-600 rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white dark:bg-gray-700 dark:text-white">
               <option value="">-- None --</option>
               {parts.map(part => (
                 <option key={part.id} value={part.id}>{part.part_number} - {part.part_name}</option>
               ))}
             </select>
           </div>
-
           <div>
-            <label className="block text-xs font-semibold text-gray-text uppercase tracking-wide mb-1.5">Status</label>
-            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full px-3 py-2 border border-gray-border rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white">
+            <label className="block text-xs font-semibold text-gray-text dark:text-gray-300 uppercase tracking-wide mb-1.5">Status</label>
+            <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full px-3 py-2 border border-gray-border dark:border-gray-600 rounded focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white dark:bg-gray-700 dark:text-white">
               <option value="IN">IN</option>
               <option value="OUT">OUT</option>
               <option value="Damaged">Damaged</option>
             </select>
           </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-divider mt-6">
-            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-gray-text bg-gray-50 hover:bg-gray-200 rounded transition-colors">Cancel</button>
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-divider dark:border-gray-700 mt-6">
+            <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-gray-text dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors">Cancel</button>
             <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded transition-colors">Save Tool</button>
           </div>
         </form>
