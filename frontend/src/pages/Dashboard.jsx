@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import StatCard from '../components/StatCard';
-import StatusBadge from '../components/StatusBadge';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
@@ -21,7 +20,7 @@ const Dashboard = () => {
     fetchStats();
   }, []);
 
-  if (loading) return <div className="text-gray-text">Loading dashboard...</div>;
+  if (loading) return <div className="text-gray-text dark:text-gray-400">Loading dashboard...</div>;
   if (!stats) return <div className="text-danger">Failed to load dashboard data.</div>;
 
   return (
@@ -34,14 +33,14 @@ const Dashboard = () => {
         <StatCard icon="📦" label="Available Stock" value={stats.availableStock} color="orange" />
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-border overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-divider flex justify-between items-center">
-          <h3 className="text-sm font-semibold text-gray-dark">Recent IN/OUT Activity</h3>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-border dark:border-gray-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-divider dark:border-gray-700 flex justify-between items-center">
+          <h3 className="text-sm font-semibold text-gray-dark dark:text-white">Recent IN/OUT Activity</h3>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50 text-gray-light uppercase text-xs tracking-wider border-b border-gray-divider">
+            <thead className="bg-gray-50 dark:bg-gray-900 text-gray-light dark:text-gray-400 uppercase text-xs tracking-wider border-b border-gray-divider dark:border-gray-700">
               <tr>
                 <th className="px-6 py-3 font-semibold">Part No.</th>
                 <th className="px-6 py-3 font-semibold">Tool Name</th>
@@ -50,21 +49,23 @@ const Dashboard = () => {
                 <th className="px-6 py-3 font-semibold">Time</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-divider">
+            <tbody className="divide-y divide-gray-divider dark:divide-gray-700">
               {stats.recentActivity && stats.recentActivity.length > 0 ? (
                 stats.recentActivity.map((activity, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-3.5 text-gray-dark font-medium">{activity.part_number || '—'}</td>
-                    <td className="px-6 py-3.5 text-gray-text">{activity.tool_name}</td>
+                  <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
+                    <td className="px-6 py-3.5 text-gray-dark dark:text-white font-medium">{activity.part_number || '—'}</td>
+                    <td className="px-6 py-3.5 text-gray-text dark:text-gray-300">{activity.tool_name}</td>
                     <td className="px-6 py-3.5">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold tracking-wide ${
-                        activity.action === 'IN' ? 'bg-success-light text-success' : 'bg-primary-light text-primary'
+                        activity.action === 'IN'
+                          ? 'bg-success-light text-success dark:bg-green-900 dark:text-green-300'
+                          : 'bg-primary-light text-primary dark:bg-blue-900 dark:text-blue-300'
                       }`}>
                         {activity.action}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5 text-gray-text">{activity.person_name}</td>
-                    <td className="px-6 py-3.5 text-gray-light">
+                    <td className="px-6 py-3.5 text-gray-text dark:text-gray-300">{activity.person_name}</td>
+                    <td className="px-6 py-3.5 text-gray-light dark:text-gray-400">
                       {new Date(activity.created_at).toLocaleString('en-IN', {
                         day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
                       })}
@@ -73,7 +74,7 @@ const Dashboard = () => {
                 ))
               ) : (
                 <tr>
-                   <td className="px-6 py-8 text-center text-gray-light italic text-xs">
+                  <td colSpan="5" className="px-6 py-8 text-center text-gray-light dark:text-gray-500 italic text-xs">
                     No recent activity found.
                   </td>
                 </tr>
