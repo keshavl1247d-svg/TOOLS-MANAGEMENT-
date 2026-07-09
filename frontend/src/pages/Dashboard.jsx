@@ -36,11 +36,11 @@ const Dashboard = () => {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-border overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-divider flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-dark">Recent IN/OUT Activity</h3>
+          <h3 className="text-sm font-semibold text-gray-dark">Recent IN/OUT Activity</h3>
         </div>
         
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-left text-xs">
             <thead className="bg-gray-50 text-gray-light uppercase text-xs tracking-wider border-b border-gray-divider">
               <tr>
                 <th className="px-6 py-3 font-semibold">Part No.</th>
@@ -73,7 +73,7 @@ const Dashboard = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-gray-light italic">
+                   <td className="px-6 py-8 text-center text-gray-light italic text-xs">
                     No recent activity found.
                   </td>
                 </tr>
