@@ -32,7 +32,7 @@ router.get('/:id', protect, async (req, res) => {
 // Add a new part (admin only)
 router.post('/', protect, adminOnly, upload.single('photo'), async (req, res) => {
   const { part_number, part_name, quantity, location, status } = req.body;
-  const photo = req.file ? req.file.filename : null;
+  const photo = req.file ? req.file.path : null;
 
   if (!part_number || !part_name) {
     return res.status(400).json({ message: 'Part number and name are required' });
@@ -63,7 +63,7 @@ router.put('/:id', protect, adminOnly, upload.single('photo'), async (req, res) 
 
   try {
     if (req.file) {
-      const photo = req.file.filename;
+      const photo = req.file.path;
       await pool.execute(
         'UPDATE parts SET part_number = ?, part_name = ?, quantity = ?, location = ?, status = ?, photo = ? WHERE id = ?',
         [part_number, part_name, quantity, location, status, photo, req.params.id]
