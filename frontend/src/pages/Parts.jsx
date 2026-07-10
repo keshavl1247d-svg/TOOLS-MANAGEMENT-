@@ -44,7 +44,7 @@ const Parts = () => {
         location: part.location || '',
         status: part.status
       });
-      setPreviewUrl(part.photo ? `/uploads/${part.photo}` : '');
+      setPreviewUrl(part.photo || '');
     } else {
       setFormData({ part_number: '', part_name: '', quantity: 0, location: '', status: 'Available' });
       setPreviewUrl('');
@@ -154,7 +154,7 @@ const Parts = () => {
                           src={`/uploads/${part.photo}`}
                           alt={part.part_name}
                           className="w-10 h-10 object-cover rounded-full border border-gray-divider cursor-pointer hover:opacity-80 transition-opacity shadow-sm"
-                          onClick={() => setLightboxData({ isOpen: true, src: `/uploads/${part.photo}` })}
+                         onClick={() => setLightboxData({ isOpen: true, src: part.photo })}
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-400 border border-gray-200 dark:border-gray-600">
