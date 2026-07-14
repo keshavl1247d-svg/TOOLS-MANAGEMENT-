@@ -50,15 +50,7 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-divider dark:border-gray-700">
-        {/* Dark mode toggle */}
-        <button
-          onClick={toggleTheme}
-          className="w-full py-2 mb-3 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 bg-gray-50 dark:bg-gray-800 text-gray-text dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-        </button>
-
+     <div className="p-4 border-t border-gray-divider dark:border-gray-700">
         <div className="flex items-center justify-between mb-3">
           <div className="truncate">
             <p className="text-sm font-medium text-gray-dark dark:text-white truncate">{user?.name}</p>
@@ -68,6 +60,15 @@ const Sidebar = () => {
             </span>
           </div>
         </div>
+
+        {/* Dark mode toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-full py-2 mb-3 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 bg-gray-50 dark:bg-gray-800 text-gray-text dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+        >
+          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+
         <button
           onClick={logout}
           className="w-full py-2 text-sm font-medium text-gray-text dark:text-gray-300 bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors"
@@ -75,7 +76,6 @@ const Sidebar = () => {
           Logout
         </button>
       </div>
-    </div>
   );
 };
 
