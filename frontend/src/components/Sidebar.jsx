@@ -60,8 +60,11 @@ const Sidebar = () => {
 
       <div className="p-4 border-t border-gray-divider dark:border-gray-700">
         <div className="flex items-center gap-3 mb-3 p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold flex-shrink-0 shadow-sm">
-            {user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U'}
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white flex-shrink-0 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
           </div>
           <div className="truncate">
             <p className="text-sm font-semibold text-gray-dark dark:text-white truncate">{user?.name}</p>
