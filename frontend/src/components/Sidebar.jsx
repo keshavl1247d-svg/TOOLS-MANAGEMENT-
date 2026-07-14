@@ -81,8 +81,12 @@ const Sidebar = () => {
 
         <button
           onClick={logout}
-          className="w-full py-2.5 text-sm font-medium text-danger bg-danger-light dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-xl transition-all"
+          className="w-full py-2.5 text-sm font-medium text-danger bg-danger-light dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-xl transition-all flex items-center justify-center gap-2"
         >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+            <line x1="12" y1="2" x2="12" y2="12"></line>
+          </svg>
           Logout
         </button>
       </div>
