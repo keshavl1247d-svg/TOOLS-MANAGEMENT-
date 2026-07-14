@@ -31,7 +31,7 @@ router.get('/daily', protect, adminOnly, async (req, res) => {
     });
 
     // Currently damaged total (from tools table)
-    const [damagedResult] = await pool.execute('SELECT COUNT(*) as damagedCount FROM tools WHERE status = "Damaged"');
+    const [damagedResult] = await pool.execute("SELECT COUNT(*) as damagedCount FROM tools WHERE status = 'Damaged'");
     const damagedCount = damagedResult[0].damagedCount;
 
     res.json({
