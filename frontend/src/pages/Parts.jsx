@@ -151,7 +151,7 @@ const Parts = () => {
                     <td className="px-6 py-3.5 flex justify-center">
                       {part.photo ? (
                         <img
-                          src={`/uploads/${part.photo}`}
+                          src={part.photo}
                           alt={part.part_name}
                           className="w-10 h-10 object-cover rounded-full border border-gray-divider cursor-pointer hover:opacity-80 transition-opacity shadow-sm"
                          onClick={() => setLightboxData({ isOpen: true, src: part.photo })}
