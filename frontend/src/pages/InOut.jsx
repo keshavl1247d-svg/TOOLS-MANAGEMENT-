@@ -40,7 +40,7 @@ const InOut = () => {
     setLoading(true);
     try {
       const payload = { ...formData, part_id: selectedTool.part_id };
-      await api.post(`/inout/${action.toLowerCase()}`, payload);
+      await api.post(`/inout/${action === 'OUT' ? 'issue' : 'return'}`, payload);
       addToast(`Tool successfully ${action === 'OUT' ? 'issued' : 'returned'}`);
       setTools(tools.map(t => t.id === parseInt(formData.tool_id)
         ? { ...t, status: action === 'IN' ? (formData.condition_status === 'Damaged' ? 'Damaged' : 'IN') : 'OUT' }
