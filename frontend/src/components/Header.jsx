@@ -27,11 +27,11 @@ const Header = () => {
   const currentDateTime = new Date().toLocaleString('en-IN', dateOptions);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-gray-border h-14 px-6 flex items-center justify-between">
-      <h2 className="text-lg font-semibold text-gray-dark">{getPageTitle()}</h2>
+    <header className="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-border dark:border-gray-700 h-14 px-6 flex items-center justify-between">
+      <h2 className="text-lg font-semibold text-gray-dark dark:text-white">{getPageTitle()}</h2>
       
       <div className="flex items-center gap-4">
-        <span className="text-xs text-gray-light font-medium">{currentDateTime}</span>
+        <span className="text-xs text-gray-light dark:text-gray-400 font-medium">{currentDateTime}</span>
         <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold shadow-sm">
           {getInitials(user?.name)}
         </div>
