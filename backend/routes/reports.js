@@ -42,7 +42,7 @@ router.get('/daily', protect, adminOnly, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching daily report:', error);
-    res.status(500).json({ message: 'Server error fetching daily report' });
+    res.status(500).json({ message: 'Server error fetching daily report', debug: error.message });
   }
 });
 
