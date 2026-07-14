@@ -21,13 +21,18 @@ const Sidebar = () => {
 
   return (
     <div className="w-60 h-screen fixed top-0 left-0 bg-white dark:bg-gray-900 border-r border-gray-border dark:border-gray-700 flex flex-col shadow-sm">
-      <div className="p-5 border-b border-gray-divider dark:border-gray-700 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-lg flex-shrink-0 shadow-md shadow-primary/30">
+     <div className="relative p-5 border-b border-gray-divider dark:border-gray-700 flex items-center gap-3 overflow-hidden">
+        <div className="absolute -top-8 -left-8 w-24 h-24 bg-primary/10 dark:bg-primary/20 rounded-full blur-2xl"></div>
+        <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-primary via-primary to-primary-dark flex items-center justify-center text-white text-xl flex-shrink-0 shadow-lg shadow-primary/40 ring-2 ring-white dark:ring-gray-900">
           🔧
         </div>
-        <div>
-          <h1 className="text-sm font-bold text-gray-dark dark:text-white leading-tight tracking-tight">Maintenance</h1>
-          <p className="text-[10px] text-gray-light dark:text-gray-400 uppercase tracking-wider mt-0.5 font-medium">Tool Management System</p>
+        <div className="relative">
+          <h1 className="text-base font-extrabold bg-gradient-to-r from-primary to-primary-dark dark:from-blue-400 dark:to-blue-200 bg-clip-text text-transparent leading-tight tracking-tight">
+            Maintenance
+          </h1>
+          <p className="text-[10px] text-gray-light dark:text-gray-400 uppercase tracking-widest mt-0.5 font-semibold">
+            Tool Management System
+          </p>
         </div>
       </div>
 
