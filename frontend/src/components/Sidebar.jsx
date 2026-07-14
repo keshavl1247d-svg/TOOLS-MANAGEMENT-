@@ -21,16 +21,18 @@ const Sidebar = () => {
 
   return (
     <div className="w-60 h-screen fixed top-0 left-0 bg-white dark:bg-gray-900 border-r border-gray-border dark:border-gray-700 flex flex-col shadow-sm">
-     <div className="relative p-5 border-b border-gray-divider dark:border-gray-700 flex items-center gap-3 overflow-hidden">
+    <div className="relative p-5 border-b border-gray-divider dark:border-gray-700 flex items-center gap-3 overflow-hidden">
         <div className="absolute -top-8 -left-8 w-24 h-24 bg-primary/10 dark:bg-primary/20 rounded-full blur-2xl"></div>
-        <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-primary via-primary to-primary-dark flex items-center justify-center text-white text-xl flex-shrink-0 shadow-lg shadow-primary/40 ring-2 ring-white dark:ring-gray-900">
-          🔧
+        <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-primary to-primary-dark flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/40 ring-2 ring-white dark:ring-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+          </svg>
         </div>
         <div className="relative">
-          <h1 className="text-base font-extrabold bg-gradient-to-r from-primary to-primary-dark dark:from-blue-400 dark:to-blue-200 bg-clip-text text-transparent leading-tight tracking-tight">
+          <h1 className="text-lg font-black bg-gradient-to-r from-primary to-primary-dark dark:from-blue-400 dark:to-blue-200 bg-clip-text text-transparent leading-tight tracking-tight">
             Maintenance
           </h1>
-          <p className="text-[10px] text-gray-light dark:text-gray-400 uppercase tracking-widest mt-0.5 font-semibold">
+          <p className="text-[10px] text-gray-light dark:text-gray-400 uppercase tracking-[0.15em] mt-0.5 font-bold">
             Tool Management System
           </p>
         </div>
