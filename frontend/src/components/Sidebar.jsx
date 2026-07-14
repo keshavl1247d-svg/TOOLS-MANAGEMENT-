@@ -50,7 +50,7 @@ const Sidebar = () => {
         ))}
       </nav>
 
-     <div className="p-4 border-t border-gray-divider dark:border-gray-700">
+      <div className="p-4 border-t border-gray-divider dark:border-gray-700">
         <div className="flex items-center justify-between mb-3">
           <div className="truncate">
             <p className="text-sm font-medium text-gray-dark dark:text-white truncate">{user?.name}</p>
@@ -76,6 +76,7 @@ const Sidebar = () => {
           Logout
         </button>
       </div>
+    </div>
   );
 };
 
